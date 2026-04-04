@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VERA Research Portal — H-EDU.Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy-mid: #112240;
+    --navy-light: #1d3557;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --cream: #f5f0e8;
+    --cream-dark: #e8e0d0;
+    --slate: #8892a4;
+    --white: #ffffff;
+    --red-flag: #e05c5c;
+    --green-ok: #4caf87;
+    --border: rgba(201,168,76,0.2);
+    --shadow: 0 4px 24px rgba(0,0,0,0.18);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--cream);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--navy-mid);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--navy);
+    font-weight: 700;
+  }
+
+  .logo-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem;
+    color: var(--white);
+    letter-spacing: 0.02em;
+  }
+
+  .logo-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    color: var(--gold);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+
+  .header-badge {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--gold);
+    background: rgba(201,168,76,0.12);
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── Layout ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr 360px;
+    height: calc(100vh - 64px);
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    background: var(--navy-mid);
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .sidebar-section h3 {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+    padding-left: 0.25rem;
+  }
+
+  .search-wrap {
+    position: relative;
+  }
+
+  .search-wrap input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem 0.6rem 2.2rem;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-wrap input:focus { border-color: var(--gold); }
+  .search-wrap input::placeholder { color: var(--slate); }
+
+  .search-icon {
+    position: absolute;
+    left: 0.65rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--slate);
+    font-size: 0.85rem;
+  }
+
+  .district-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .district-item {
+    padding: 0.6rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.83rem;
+    color: var(--cream);
+    transition: all 0.15s;
+    border: 1px solid transparent;
+    line-height: 1.3;
+  }
+
+  .district-item:hover {
+    background: rgba(201,168,76,0.08);
+    border-color: var(--border);
+  }
+
+  .district-item.active {
+    background: rgba(201,168,76,0.15);
+    border-color: var(--gold);
+    color: var(--gold-light);
+    font-weight: 500;
+  }
+
+  .district-county {
+    font-size: 0.7rem;
+    color: var(--slate);
+    margin-top: 1px;
+  }
+
+  .sidebar-filters label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--slate);
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+  }
+
+  .sidebar-filters select {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5rem 0.6rem;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.83rem;
+    outline: none;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+  }
+
+  .sidebar-filters select:focus { border-color: var(--gold); }
+
+  /* ── Main dashboard ── */
+  .main {
+    overflow-y: auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  /* Empty state */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 1rem;
+    opacity: 0.5;
+    text-align: center;
+  }
+
+  .empty-state-icon {
+    font-size: 3rem;
+  }
+
+  .empty-state h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--cream);
+  }
+
+  .empty-state p {
+    font-size: 0.9rem;
+    color: var(--slate);
+    max-width: 300px;
+  }
+
+  /* District header */
+  .district-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .district-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.9rem;
+    color: var(--white);
+    line-height: 1.1;
+  }
+
+  .district-county-tag {
+    font-size: 0.78rem;
+    color: var(--gold);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  .export-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--gold);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.04em;
+  }
+
+  .export-btn:hover {
+    background: rgba(201,168,76,0.1);
+    border-color: var(--gold);
+  }
+
+  /* Summary cards */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .card {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+
+  .card-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 0.5rem;
+  }
+
+  .card-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .card-sub {
+    font-size: 0.73rem;
+    color: var(--slate);
+    margin-top: 0.35rem;
+  }
+
+  .card-flag .card-value { color: var(--red-flag); }
+  .card-good .card-value { color: var(--green-ok); }
+
+  /* Section */
+  .section {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .section-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    color: var(--white);
+  }
+
+  .section-count {
+    font-size: 0.75rem;
+    color: var(--slate);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* Table */
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+
+  thead th {
+    padding: 0.65rem 1rem;
+    text-align: left;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--slate);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.1s;
+  }
+
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+  tbody tr.type4-flag { background: rgba(224,92,92,0.06); }
+  tbody tr.type4-flag:hover { background: rgba(224,92,92,0.1); }
+
+  tbody td {
+    padding: 0.65rem 1rem;
+    color: var(--cream);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .badge-flag { background: rgba(224,92,92,0.15); color: var(--red-flag); }
+  .badge-ok { background: rgba(76,175,135,0.15); color: var(--green-ok); }
+  .badge-neutral { background: rgba(136,146,164,0.15); color: var(--slate); }
+
+  /* Tab nav inside sections */
+  .tab-nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab-btn {
+    padding: 0.75rem 1.25rem;
+    background: transparent;
+    border: none;
+    color: var(--slate);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+
+  .tab-btn:hover { color: var(--cream); }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .tab-content { display: none; padding: 1.25rem; }
+  .tab-content.active { display: block; }
+
+  /* Loading spinner */
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(201,168,76,0.2);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-row td {
+    text-align: center;
+    color: var(--slate);
+    padding: 2rem;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ── AI Chat Panel ── */
+  .chat-panel {
+    background: var(--navy-mid);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .chat-header {
+    padding: 1.25rem 1.25rem 1rem;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .chat-header-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem;
+    color: var(--white);
+  }
+
+  .chat-header-sub {
+    font-size: 0.72rem;
+    color: var(--slate);
+    margin-top: 0.2rem;
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .chat-bubble {
+    max-width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    font-size: 0.83rem;
+    line-height: 1.55;
+    animation: fadeUp 0.2s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .bubble-user {
+    background: rgba(201,168,76,0.12);
+    border: 1px solid var(--border);
+    color: var(--cream);
+    align-self: flex-end;
+  }
+
+  .bubble-assistant {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: var(--cream);
+    align-self: flex-start;
+  }
+
+  .bubble-role {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .bubble-user .bubble-role { color: var(--gold); }
+  .bubble-assistant .bubble-role { color: var(--slate); }
+
+  .chat-welcome {
+    font-size: 0.82rem;
+    color: var(--slate);
+    text-align: center;
+    padding: 2rem 1rem;
+    line-height: 1.6;
+  }
+
+  .chat-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 1rem;
+  }
+
+  .suggestion-chip {
+    background: rgba(201,168,76,0.06);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.78rem;
+    color: var(--cream);
+    cursor: pointer;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .suggestion-chip:hover {
+    background: rgba(201,168,76,0.12);
+    border-color: var(--gold);
+    color: var(--gold-light);
+  }
+
+  .chat-input-wrap {
+    padding: 1rem;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .chat-input-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+  }
+
+  .chat-input {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.65rem 0.85rem;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.83rem;
+    outline: none;
+    resize: none;
+    min-height: 42px;
+    max-height: 120px;
+    transition: border-color 0.2s;
+    line-height: 1.4;
+  }
+
+  .chat-input:focus { border-color: var(--gold); }
+  .chat-input::placeholder { color: var(--slate); }
+
+  .chat-send {
+    background: var(--gold);
+    border: none;
+    border-radius: 8px;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s;
+    flex-shrink: 0;
+    color: var(--navy);
+    font-size: 1rem;
+  }
+
+  .chat-send:hover { background: var(--gold-light); }
+  .chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Scrollbars */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.4); }
+
+  /* Responsive notice */
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: 240px 1fr; }
+    .chat-panel { display: none; }
+    .cards { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">V</div>
+    <div>
+      <div class="logo-text">VERA Research Portal</div>
+      <div class="logo-sub">H-EDU.Solutions · Verification Engine for Results &amp; Accountability</div>
+    </div>
+  </div>
+  <div class="header-badge">Research Access · CSBA</div>
+</header>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <h3>Districts</h3>
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="districtSearch" placeholder="Search districts…">
+      </div>
+      <div class="district-list" id="districtList">
+        <div style="color:var(--slate);font-size:0.82rem;padding:0.5rem;text-align:center;">
+          <span class="spinner"></span> Loading…
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section sidebar-filters">
+      <h3>Filters</h3>
+      <label>School Year</label>
+      <select id="filterYear">
+        <option value="">All years</option>
+        <option value="2024">2023–24</option>
+        <option value="2023">2022–23</option>
+        <option value="2022">2021–22</option>
+      </select>
+      <label>Grade</label>
+      <select id="filterGrade">
+        <option value="">All grades</option>
+        <option value="3">Grade 3</option>
+        <option value="4">Grade 4</option>
+        <option value="5">Grade 5</option>
+        <option value="6">Grade 6</option>
+        <option value="7">Grade 7</option>
+        <option value="8">Grade 8</option>
+      </select>
+      <label>Minimum Delta</label>
+      <select id="filterDelta">
+        <option value="">Any delta</option>
+        <option value="4">4+ points</option>
+        <option value="8">8+ points (Type 4)</option>
+        <option value="12">12+ points</option>
+      </select>
+    </div>
+  </aside>
+
+  <!-- Main dashboard -->
+  <main class="main" id="mainContent">
+    <div class="empty-state">
+      <div class="empty-state-icon">◈</div>
+      <h2>Select a District</h2>
+      <p>Choose a district from the sidebar to view VERA data — gap profiles, CAASPP results, ELPAC scores, LCAP allocations, and observations.</p>
+    </div>
+  </main>
+
+  <!-- AI Chat Panel -->
+  <aside class="chat-panel">
+    <div class="chat-header">
+      <div class="chat-header-title">VERA Research Assistant</div>
+      <div class="chat-header-sub">Ask questions about any district's data</div>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-welcome">
+        <strong style="color:var(--cream);">Ask me anything about VERA data.</strong><br>
+        I have access to the current district's gap profiles, LCAP allocations, CAASPP and ELPAC scores, and observation records.
+        <div class="chat-suggestions" id="chatSuggestions">
+          <button class="suggestion-chip" onclick="sendSuggestion(this)">What is the oral-written delta and why does it matter?</button>
+          <button class="suggestion-chip" onclick="sendSuggestion(this)">Which districts have the largest Type 4 gaps?</button>
+          <button class="suggestion-chip" onclick="sendSuggestion(this)">How is the LCAP match rate calculated?</button>
+          <button class="suggestion-chip" onclick="sendSuggestion(this)">What does COE reviewed status mean?</button>
+        </div>
+      </div>
+    </div>
+    <div class="chat-input-wrap">
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="chatInput" placeholder="Ask about VERA data…" rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"></textarea>
+        <button class="chat-send" id="chatSendBtn" onclick="sendChat()" title="Send">➤</button>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────────
+const API = '';  // same origin
+let currentDistrict = null;
+let allDistricts = [];
+let currentSummary = null;
+
+// ── Boot ───────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadDistricts();
+  document.getElementById('districtSearch').addEventListener('input', filterDistricts);
+  autoResizeTextarea(document.getElementById('chatInput'));
+});
+
+function autoResizeTextarea(el) {
+  el.addEventListener('input', () => {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  });
+}
+
+// ── Districts ──────────────────────────────────────────────────────────────────
+async function loadDistricts() {
+  try {
+    const res = await fetch(`${API}/api/districts`);
+    const data = await res.json();
+    allDistricts = data.districts || [];
+    renderDistricts(allDistricts);
+  } catch (e) {
+    document.getElementById('districtList').innerHTML =
+      `<div style="color:var(--red-flag);font-size:0.8rem;padding:0.5rem;">Failed to load districts.</div>`;
+  }
+}
+
+function renderDistricts(list) {
+  const el = document.getElementById('districtList');
+  if (!list.length) {
+    el.innerHTML = `<div style="color:var(--slate);font-size:0.82rem;padding:0.5rem;">No districts found.</div>`;
+    return;
+  }
+  el.innerHTML = list.map(d => `
+    <div class="district-item ${currentDistrict?.district_id === d.district_id ? 'active' : ''}"
+         onclick="selectDistrict('${d.district_id}','${escHtml(d.district_name)}','${escHtml(d.county || '')}')">
+      ${escHtml(d.district_name)}
+      <div class="district-county">${escHtml(d.county || '')}</div>
+    </div>
+  `).join('');
+}
+
+function filterDistricts() {
+  const q = document.getElementById('districtSearch').value.toLowerCase();
+  renderDistricts(allDistricts.filter(d =>
+    d.district_name.toLowerCase().includes(q) ||
+    (d.county || '').toLowerCase().includes(q)
+  ));
+}
+
+// ── Select district ────────────────────────────────────────────────────────────
+async function selectDistrict(id, name, county) {
+  currentDistrict = { district_id: id, district_name: name, county };
+  renderDistricts(allDistricts.filter(d =>
+    d.district_name.toLowerCase().includes(
+      document.getElementById('districtSearch').value.toLowerCase()
+    )
+  ));
+  showLoading(name);
+  await loadDistrictData(id);
+}
+
+function showLoading(name) {
+  document.getElementById('mainContent').innerHTML = `
+    <div style="color:var(--slate);text-align:center;padding:4rem;">
+      <span class="spinner"></span>
+      <div style="margin-top:0.75rem;font-size:0.85rem;">Loading ${escHtml(name)}…</div>
+    </div>`;
+}
+
+async function loadDistrictData(id) {
+  const year = document.getElementById('filterYear').value;
+  const grade = document.getElementById('filterGrade').value;
+  const minDelta = document.getElementById('filterDelta').value;
+
+  try {
+    const [summary, gaps, caaspp, elpac, lcap] = await Promise.all([
+      fetch(`${API}/api/districts/${id}/summary`).then(r => r.json()),
+      fetch(`${API}/api/districts/${id}/gaps${minDelta ? `?min_delta=${minDelta}` : ''}`).then(r => r.json()),
+      fetch(`${API}/api/districts/${id}/caaspp${buildQS({year,grade})}`).then(r => r.json()),
+      fetch(`${API}/api/districts/${id}/elpac${buildQS({year,grade})}`).then(r => r.json()),
+      fetch(`${API}/api/districts/${id}/lcap`).then(r => r.json()),
+    ]);
+
+    currentSummary = summary.summary;
+    renderDashboard(summary, gaps, caaspp, elpac, lcap);
+  } catch (e) {
+    document.getElementById('mainContent').innerHTML =
+      `<div style="color:var(--red-flag);padding:2rem;">Error loading data: ${e.message}</div>`;
+  }
+}
+
+function buildQS(params) {
+  const q = Object.entries(params).filter(([,v]) => v).map(([k,v]) => `${k}=${v}`).join('&');
+  return q ? `?${q}` : '';
+}
+
+// ── Render dashboard ───────────────────────────────────────────────────────────
+function renderDashboard(summary, gaps, caaspp, elpac, lcap) {
+  const d = summary.district || {};
+  const s = summary.summary || {};
+  const gapData = gaps.gap_profiles || [];
+  const caasppData = caaspp.caaspp || [];
+  const elpacData = elpac.elpac || [];
+  const lcapData = lcap.lcap || [];
+
+  const html = `
+    <div class="district-header">
+      <div>
+        <div class="district-title">${escHtml(d.district_name || currentDistrict.district_name)}</div>
+        <div class="district-county-tag">${escHtml(d.county || currentDistrict.county)} County · District ID ${escHtml(d.district_id || currentDistrict.district_id)}</div>
+      </div>
+      <button class="export-btn" onclick="exportCSV()">↓ Export CSV</button>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="cards">
+      <div class="card">
+        <div class="card-label">Gap Profiles</div>
+        <div class="card-value">${s.total_gap_profiles ?? '—'}</div>
+        <div class="card-sub">${s.verified_gap_profiles ?? 0} verified</div>
+      </div>
+      <div class="card card-flag">
+        <div class="card-label">Avg Oral-Written Delta</div>
+        <div class="card-value">${s.average_oral_written_delta ?? '—'}</div>
+        <div class="card-sub">Max: ${s.max_oral_written_delta ?? '—'} pts</div>
+      </div>
+      <div class="card ${(s.average_lcap_match_rate || 0) >= 0.7 ? 'card-good' : 'card-flag'}">
+        <div class="card-label">LCAP Match Rate</div>
+        <div class="card-value">${s.average_lcap_match_rate ? Math.round(s.average_lcap_match_rate * 100) + '%' : '—'}</div>
+        <div class="card-sub">${s.coe_reviewed ? '✓ COE Reviewed' : 'Pending COE review'}</div>
+      </div>
+      <div class="card">
+        <div class="card-label">LCAP Allocation</div>
+        <div class="card-value">$${formatNum(s.total_lcap_allocation || 0)}</div>
+        <div class="card-sub">Total fiscal allocation</div>
+      </div>
+    </div>
+
+    <!-- Tabbed data sections -->
+    <div class="section">
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('gaps',this)">Gap Profiles</button>
+        <button class="tab-btn" onclick="switchTab('caaspp',this)">CAASPP</button>
+        <button class="tab-btn" onclick="switchTab('elpac',this)">ELPAC Speaking</button>
+        <button class="tab-btn" onclick="switchTab('lcap',this)">LCAP</button>
+      </div>
+
+      <!-- Gap Profiles Tab -->
+      <div class="tab-content active" id="tab-gaps">
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Student ID</th><th>Year</th><th>Subject</th>
+              <th>Delta</th><th>Gap Type</th><th>Confidence</th>
+              <th>Observations</th><th>Verified</th>
+            </tr></thead>
+            <tbody>
+              ${gapData.length ? gapData.map(g => `
+                <tr class="${g.oral_written_delta >= 8 ? 'type4-flag' : ''}">
+                  <td>${escHtml(g.student_id || '—')}</td>
+                  <td>${g.school_year || '—'}</td>
+                  <td>${escHtml(g.subject || '—')}</td>
+                  <td><strong>${g.oral_written_delta?.toFixed(1) ?? '—'}</strong></td>
+                  <td>${g.oral_written_delta >= 8
+                    ? '<span class="badge badge-flag">▲ Type 4</span>'
+                    : '<span class="badge badge-neutral">—</span>'}</td>
+                  <td>${g.confidence_score ? (g.confidence_score * 100).toFixed(0) + '%' : '—'}</td>
+                  <td>${g.observation_count ?? '—'}</td>
+                  <td>${g.gap_match_verified
+                    ? '<span class="badge badge-ok">✓ Yes</span>'
+                    : '<span class="badge badge-neutral">Pending</span>'}</td>
+                </tr>`).join('')
+              : '<tr class="loading-row"><td colspan="8">No gap profiles found for this district.</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CAASPP Tab -->
+      <div class="tab-content" id="tab-caaspp">
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Year</th><th>Grade</th><th>Subgroup</th><th>N Tested</th>
+              <th>% Met/Exceeded</th><th>Claim 1</th><th>Claim 2</th><th>Claim 3</th><th>Claim 4</th>
+            </tr></thead>
+            <tbody>
+              ${caasppData.length ? caasppData.map(c => `
+                <tr>
+                  <td>${c.year || '—'}</td>
+                  <td>${c.grade ?? '—'}</td>
+                  <td>${escHtml(c.subgroup_name || '—')}</td>
+                  <td>${c.n_tested ?? '—'}</td>
+                  <td>${c.pct_met_exceeded != null ? c.pct_met_exceeded.toFixed(1) + '%' : '—'}</td>
+                  <td>${c.claim1 != null ? c.claim1.toFixed(1) : '—'}</td>
+                  <td><strong>${c.claim2 != null ? c.claim2.toFixed(1) : '—'}</strong></td>
+                  <td>${c.claim3 != null ? c.claim3.toFixed(1) : '—'}</td>
+                  <td>${c.claim4 != null ? c.claim4.toFixed(1) : '—'}</td>
+                </tr>`).join('')
+              : '<tr class="loading-row"><td colspan="9">No CAASPP data found for this district.</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ELPAC Tab -->
+      <div class="tab-content" id="tab-elpac">
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Year</th><th>Grade</th><th>Subgroup</th>
+              <th>N Tested</th><th>% Level 3–4 (Proficient)</th>
+            </tr></thead>
+            <tbody>
+              ${elpacData.length ? elpacData.map(e => `
+                <tr>
+                  <td>${e.year || '—'}</td>
+                  <td>${e.grade ?? '—'}</td>
+                  <td>${escHtml(e.subgroup_name || '—')}</td>
+                  <td>${e.n_tested ?? '—'}</td>
+                  <td>${e.pct_level3_4 != null ? e.pct_level3_4.toFixed(1) + '%' : '—'}</td>
+                </tr>`).join('')
+              : '<tr class="loading-row"><td colspan="5">No ELPAC data found for this district.</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- LCAP Tab -->
+      <div class="tab-content" id="tab-lcap">
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Fiscal Year</th><th>Intervention</th><th>Allocation</th>
+              <th>Students Served</th><th>Match Rate</th><th>COE Reviewed</th>
+            </tr></thead>
+            <tbody>
+              ${lcapData.length ? lcapData.map(l => `
+                <tr>
+                  <td>${l.fiscal_year || '—'}</td>
+                  <td>${escHtml(l.interventions?.name || '—')}</td>
+                  <td>$${formatNum(l.allocation_amount || 0)}</td>
+                  <td>${l.students_served ?? '—'}</td>
+                  <td>${l.match_rate != null
+                    ? `<span class="badge ${l.match_rate >= 0.7 ? 'badge-ok' : 'badge-flag'}">${(l.match_rate * 100).toFixed(0)}%</span>`
+                    : '—'}</td>
+                  <td>${l.coe_reviewed
+                    ? '<span class="badge badge-ok">✓ Yes</span>'
+                    : '<span class="badge badge-neutral">No</span>'}</td>
+                </tr>`).join('')
+              : '<tr class="loading-row"><td colspan="6">No LCAP data found for this district.</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('mainContent').innerHTML = html;
+
+  // Re-attach filter listeners
+  ['filterYear','filterGrade','filterDelta'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', () => {
+      if (currentDistrict) loadDistrictData(currentDistrict.district_id);
+    });
+  });
+}
+
+// ── Tabs ───────────────────────────────────────────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(`tab-${name}`)?.classList.add('active');
+}
+
+// ── Export CSV ─────────────────────────────────────────────────────────────────
+function exportCSV() {
+  if (!currentDistrict) return;
+  const activeTab = document.querySelector('.tab-btn.active')?.textContent?.trim().toLowerCase() || 'gaps';
+  const table = document.querySelector('.tab-content.active table');
+  if (!table) return;
+
+  const rows = [];
+  table.querySelectorAll('tr').forEach(tr => {
+    const cells = Array.from(tr.querySelectorAll('th,td')).map(c =>
+      `"${c.innerText.replace(/"/g, '""')}"`
+    );
+    if (cells.length) rows.push(cells.join(','));
+  });
+
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `VERA_${currentDistrict.district_name}_${activeTab}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── AI Chat ────────────────────────────────────────────────────────────────────
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  appendBubble('user', msg);
+  input.value = '';
+  input.style.height = 'auto';
+  document.getElementById('chatSendBtn').disabled = true;
+
+  const thinkingId = appendBubble('assistant', '<span class="spinner"></span> Thinking…', true);
+
+  try {
+    const res = await fetch(`${API}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: msg,
+        district_id: currentDistrict?.district_id || null,
+        district_name: currentDistrict?.district_name || null,
+        context_summary: currentSummary ? JSON.stringify(currentSummary) : null,
+      }),
+    });
+
+    const data = await res.json();
+    document.getElementById(thinkingId)?.remove();
+    appendBubble('assistant', escHtml(data.response || 'No response.').replace(/\n/g, '<br>'));
+  } catch (e) {
+    document.getElementById(thinkingId)?.remove();
+    appendBubble('assistant', 'Error reaching VERA Research Assistant. Please try again.');
+  }
+
+  document.getElementById('chatSendBtn').disabled = false;
+}
+
+function sendSuggestion(btn) {
+  document.getElementById('chatInput').value = btn.textContent;
+  btn.closest('.chat-suggestions')?.remove();
+  sendChat();
+}
+
+function appendBubble(role, html, isTemp = false) {
+  const container = document.getElementById('chatMessages');
+  const id = 'bubble-' + Date.now();
+  const div = document.createElement('div');
+  div.className = `chat-bubble bubble-${role}`;
+  div.id = id;
+  div.innerHTML = `<div class="bubble-role">${role === 'user' ? 'You' : 'VERA Assistant'}</div>${html}`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  return id;
+}
+
+// ── Utils ──────────────────────────────────────────────────────────────────────
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function formatNum(n) {
+  const num = parseFloat(n);
+  if (isNaN(num)) return '0';
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+  if (num >= 1000) return (num / 1000).toFixed(0) + 'K';
+  return num.toFixed(0);
+}
+</script>
+</body>
+</html>

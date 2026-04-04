@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: vera-research-portal
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: SUPABASE_URL
+        value: https://qvzwdcqshhajtpskqmxa.supabase.co
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+    staticPublishPath: static
+    healthCheckPath: /health
