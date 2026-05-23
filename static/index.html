@@ -189,6 +189,21 @@
     margin-top: 1px;
   }
 
+  .sidebar-section select {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5rem 0.6rem;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.83rem;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .sidebar-section select:focus { border-color: var(--gold); }
+
   .sidebar-filters label {
     display: block;
     font-size: 0.75rem;
@@ -665,6 +680,13 @@
   <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-section">
+      <h3>Jurisdiction</h3>
+      <select id="jurisdictionSelect" onchange="onJurisdictionChange()">
+        <option value="">All states (US)</option>
+      </select>
+    </div>
+
+    <div class="sidebar-section">
       <h3>Districts</h3>
       <div class="search-wrap">
         <span class="search-icon">⌕</span>
@@ -750,9 +772,12 @@ const API = '';  // same origin
 let currentDistrict = null;
 let allDistricts = [];
 let currentSummary = null;
+let currentState = '';          // selected state abbreviation
+let jurisdictions = [];         // [{state, name, oral_assessment, written_assessment}]
 
 // ── Boot ───────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  loadJurisdictions();
   loadDistricts();
   document.getElementById('districtSearch').addEventListener('input', filterDistricts);
   autoResizeTextarea(document.getElementById('chatInput'));
@@ -765,10 +790,43 @@ function autoResizeTextarea(el) {
   });
 }
 
+// ── Jurisdictions ──────────────────────────────────────────────────────────────
+async function loadJurisdictions() {
+  try {
+    const res = await fetch(`${API}/api/jurisdictions`);
+    const data = await res.json();
+    jurisdictions = data.jurisdictions || [];
+    const sel = document.getElementById('jurisdictionSelect');
+    jurisdictions.forEach(j => {
+      const opt = document.createElement('option');
+      opt.value = j.state;
+      opt.textContent = `${j.state} — ${j.name}`;
+      sel.appendChild(opt);
+    });
+  } catch (_) {}
+}
+
+function onJurisdictionChange() {
+  currentState = document.getElementById('jurisdictionSelect').value;
+  currentDistrict = null;
+  loadDistricts();
+  document.getElementById('mainContent').innerHTML = `
+    <div class="empty-state">
+      <div class="empty-state-icon">◈</div>
+      <h2>Select a District</h2>
+      <p>Choose a district from the sidebar to view VERA data.</p>
+    </div>`;
+}
+
+function getJurisdictionMeta(stateAbbr) {
+  return jurisdictions.find(j => j.state === stateAbbr) || {};
+}
+
 // ── Districts ──────────────────────────────────────────────────────────────────
 async function loadDistricts() {
   try {
-    const res = await fetch(`${API}/api/districts`);
+    const qs = currentState ? `?state=${encodeURIComponent(currentState)}` : '';
+    const res = await fetch(`${API}/api/districts${qs}`);
     const data = await res.json();
     allDistricts = data.districts || [];
     renderDistricts(allDistricts);
@@ -786,9 +844,9 @@ function renderDistricts(list) {
   }
   el.innerHTML = list.map(d => `
     <div class="district-item ${currentDistrict?.district_id === d.district_id ? 'active' : ''}"
-         onclick="selectDistrict('${d.district_id}','${escHtml(d.district_name)}','${escHtml(d.county || '')}')">
+         onclick="selectDistrict('${d.district_id}','${escHtml(d.district_name)}','${escHtml(d.county || '')}','${escHtml(d.state || '')}')">
       ${escHtml(d.district_name)}
-      <div class="district-county">${escHtml(d.county || '')}</div>
+      <div class="district-county">${escHtml(d.county || '')}${d.state ? ' · ' + escHtml(d.state) : ''}</div>
     </div>
   `).join('');
 }
@@ -797,13 +855,14 @@ function filterDistricts() {
   const q = document.getElementById('districtSearch').value.toLowerCase();
   renderDistricts(allDistricts.filter(d =>
     d.district_name.toLowerCase().includes(q) ||
-    (d.county || '').toLowerCase().includes(q)
+    (d.county || '').toLowerCase().includes(q) ||
+    (d.state || '').toLowerCase().includes(q)
   ));
 }
 
 // ── Select district ────────────────────────────────────────────────────────────
-async function selectDistrict(id, name, county) {
-  currentDistrict = { district_id: id, district_name: name, county };
+async function selectDistrict(id, name, county, state) {
+  currentDistrict = { district_id: id, district_name: name, county, state: state || currentState };
   renderDistricts(allDistricts.filter(d =>
     d.district_name.toLowerCase().includes(
       document.getElementById('districtSearch').value.toLowerCase()
@@ -857,11 +916,16 @@ function renderDashboard(summary, gaps, caaspp, elpac, lcap) {
   const elpacData = elpac.elpac || [];
   const lcapData = lcap.lcap || [];
 
+  const jxMeta = getJurisdictionMeta(currentDistrict?.state || '');
+  const oralLabel = jxMeta.oral_assessment || 'Oral Assessment';
+  const writtenLabel = jxMeta.written_assessment || 'Written Assessment';
+  const fundingLabel = currentDistrict?.state === 'CA' ? 'LCAP' : 'Accountability Funding';
+
   const html = `
     <div class="district-header">
       <div>
         <div class="district-title">${escHtml(d.district_name || currentDistrict.district_name)}</div>
-        <div class="district-county-tag">${escHtml(d.county || currentDistrict.county)} County · District ID ${escHtml(d.district_id || currentDistrict.district_id)}</div>
+        <div class="district-county-tag">${escHtml(d.county || currentDistrict.county)} County${currentDistrict.state ? ' · ' + escHtml(currentDistrict.state) : ''} · District ID ${escHtml(d.district_id || currentDistrict.district_id)}</div>
       </div>
       <button class="export-btn" onclick="exportCSV()">↓ Export CSV</button>
     </div>
@@ -879,12 +943,12 @@ function renderDashboard(summary, gaps, caaspp, elpac, lcap) {
         <div class="card-sub">Max: ${s.max_oral_written_delta ?? '—'} pts</div>
       </div>
       <div class="card ${(s.average_lcap_match_rate || 0) >= 0.7 ? 'card-good' : 'card-flag'}">
-        <div class="card-label">LCAP Match Rate</div>
+        <div class="card-label">${escHtml(fundingLabel)} Match Rate</div>
         <div class="card-value">${s.average_lcap_match_rate ? Math.round(s.average_lcap_match_rate * 100) + '%' : '—'}</div>
-        <div class="card-sub">${s.coe_reviewed ? '✓ COE Reviewed' : 'Pending COE review'}</div>
+        <div class="card-sub">${s.coe_reviewed ? '✓ Accountability Office Reviewed' : 'Pending accountability review'}</div>
       </div>
       <div class="card">
-        <div class="card-label">LCAP Allocation</div>
+        <div class="card-label">${escHtml(fundingLabel)} Allocation</div>
         <div class="card-value">$${formatNum(s.total_lcap_allocation || 0)}</div>
         <div class="card-sub">Total fiscal allocation</div>
       </div>
@@ -894,9 +958,9 @@ function renderDashboard(summary, gaps, caaspp, elpac, lcap) {
     <div class="section">
       <div class="tab-nav">
         <button class="tab-btn active" onclick="switchTab('gaps',this)">Gap Profiles</button>
-        <button class="tab-btn" onclick="switchTab('caaspp',this)">CAASPP</button>
-        <button class="tab-btn" onclick="switchTab('elpac',this)">ELPAC Speaking</button>
-        <button class="tab-btn" onclick="switchTab('lcap',this)">LCAP</button>
+        <button class="tab-btn" onclick="switchTab('caaspp',this)">${escHtml(writtenLabel)}</button>
+        <button class="tab-btn" onclick="switchTab('elpac',this)">${escHtml(oralLabel)}</button>
+        <button class="tab-btn" onclick="switchTab('lcap',this)">${escHtml(fundingLabel)}</button>
       </div>
 
       <!-- Gap Profiles Tab -->
@@ -930,13 +994,13 @@ function renderDashboard(summary, gaps, caaspp, elpac, lcap) {
         </div>
       </div>
 
-      <!-- CAASPP Tab -->
+      <!-- Written Assessment Tab -->
       <div class="tab-content" id="tab-caaspp">
         <div class="table-wrap">
           <table>
             <thead><tr>
               <th>Year</th><th>Grade</th><th>Subgroup</th><th>N Tested</th>
-              <th>% Met/Exceeded</th><th>Claim 1</th><th>Claim 2</th><th>Claim 3</th><th>Claim 4</th>
+              <th>% Met/Exceeded</th><th>Claim 1</th><th>Claim 2 (Written)</th><th>Claim 3</th><th>Claim 4</th>
             </tr></thead>
             <tbody>
               ${caasppData.length ? caasppData.map(c => `
@@ -951,19 +1015,19 @@ function renderDashboard(summary, gaps, caaspp, elpac, lcap) {
                   <td>${c.claim3 != null ? c.claim3.toFixed(1) : '—'}</td>
                   <td>${c.claim4 != null ? c.claim4.toFixed(1) : '—'}</td>
                 </tr>`).join('')
-              : '<tr class="loading-row"><td colspan="9">No CAASPP data found for this district.</td></tr>'}
+              : \`<tr class="loading-row"><td colspan="9">No \${escHtml(writtenLabel)} data found for this district.</td></tr>\`}
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- ELPAC Tab -->
+      <!-- Oral Assessment Tab -->
       <div class="tab-content" id="tab-elpac">
         <div class="table-wrap">
           <table>
             <thead><tr>
               <th>Year</th><th>Grade</th><th>Subgroup</th>
-              <th>N Tested</th><th>% Level 3–4 (Proficient)</th>
+              <th>N Tested</th><th>% Proficient (Oral)</th>
             </tr></thead>
             <tbody>
               ${elpacData.length ? elpacData.map(e => `
@@ -974,19 +1038,19 @@ function renderDashboard(summary, gaps, caaspp, elpac, lcap) {
                   <td>${e.n_tested ?? '—'}</td>
                   <td>${e.pct_level3_4 != null ? e.pct_level3_4.toFixed(1) + '%' : '—'}</td>
                 </tr>`).join('')
-              : '<tr class="loading-row"><td colspan="5">No ELPAC data found for this district.</td></tr>'}
+              : \`<tr class="loading-row"><td colspan="5">No \${escHtml(oralLabel)} data found for this district.</td></tr>\`}
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- LCAP Tab -->
+      <!-- Funding Tab -->
       <div class="tab-content" id="tab-lcap">
         <div class="table-wrap">
           <table>
             <thead><tr>
               <th>Fiscal Year</th><th>Intervention</th><th>Allocation</th>
-              <th>Students Served</th><th>Match Rate</th><th>COE Reviewed</th>
+              <th>Students Served</th><th>Match Rate</th><th>Accountability Reviewed</th>
             </tr></thead>
             <tbody>
               ${lcapData.length ? lcapData.map(l => `
@@ -1002,7 +1066,7 @@ function renderDashboard(summary, gaps, caaspp, elpac, lcap) {
                     ? '<span class="badge badge-ok">✓ Yes</span>'
                     : '<span class="badge badge-neutral">No</span>'}</td>
                 </tr>`).join('')
-              : '<tr class="loading-row"><td colspan="6">No LCAP data found for this district.</td></tr>'}
+              : \`<tr class="loading-row"><td colspan="6">No \${escHtml(fundingLabel)} data found for this district.</td></tr>\`}
             </tbody>
           </table>
         </div>
@@ -1073,6 +1137,7 @@ async function sendChat() {
         message: msg,
         district_id: currentDistrict?.district_id || null,
         district_name: currentDistrict?.district_name || null,
+        state: currentDistrict?.state || currentState || null,
         context_summary: currentSummary ? JSON.stringify(currentSummary) : null,
       }),
     });
