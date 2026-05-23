@@ -189,9 +189,10 @@
     margin-top: 1px;
   }
 
-  .sidebar-section select {
+  .sidebar-section select,
+  .sidebar-filters select {
     width: 100%;
-    background: rgba(255,255,255,0.05);
+    background: #1a2e4a;
     border: 1px solid var(--border);
     border-radius: 6px;
     padding: 0.5rem 0.6rem;
@@ -200,33 +201,26 @@
     font-size: 0.83rem;
     outline: none;
     cursor: pointer;
+    margin-bottom: 0;
   }
 
-  .sidebar-section select:focus { border-color: var(--gold); }
+  .sidebar-section select:focus,
+  .sidebar-filters select:focus { border-color: var(--gold); }
+
+  .sidebar-section select option,
+  .sidebar-filters select option {
+    background: #1a2e4a;
+    color: var(--cream);
+  }
 
   .sidebar-filters label {
     display: block;
     font-size: 0.75rem;
     color: var(--slate);
     margin-bottom: 0.3rem;
+    margin-top: 0.75rem;
     font-weight: 500;
   }
-
-  .sidebar-filters select {
-    width: 100%;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.5rem 0.6rem;
-    color: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.83rem;
-    outline: none;
-    margin-bottom: 0.75rem;
-    cursor: pointer;
-  }
-
-  .sidebar-filters select:focus { border-color: var(--gold); }
 
   /* ── Main dashboard ── */
   .main {
@@ -846,17 +840,13 @@ function autoResizeTextarea(el) {
 
 // ── Jurisdictions ──────────────────────────────────────────────────────────────
 async function loadJurisdictions() {
+  // Populate assessment-label metadata for the AI prompt and tab headers.
+  // The dropdown options are hardcoded in the HTML — this only fills the
+  // jurisdictions array used by getJurisdictionMeta().
   try {
     const res = await fetch(`${API}/api/jurisdictions`);
     const data = await res.json();
     jurisdictions = data.jurisdictions || [];
-    const sel = document.getElementById('jurisdictionSelect');
-    jurisdictions.forEach(j => {
-      const opt = document.createElement('option');
-      opt.value = j.state;
-      opt.textContent = `${j.state} — ${j.name}`;
-      sel.appendChild(opt);
-    });
   } catch (_) {}
 }
 
