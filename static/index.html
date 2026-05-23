@@ -829,7 +829,10 @@ let jurisdictions = [];         // [{state, name, oral_assessment, written_asses
 // ── Boot ───────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   loadJurisdictions();
-  loadDistricts();
+  document.getElementById('districtList').innerHTML =
+    `<div style="color:var(--slate);font-size:0.82rem;padding:0.5rem;text-align:center;line-height:1.5;">
+      Select a state above<br>to load districts.
+    </div>`;
   document.getElementById('districtSearch').addEventListener('input', filterDistricts);
   autoResizeTextarea(document.getElementById('chatInput'));
 });
