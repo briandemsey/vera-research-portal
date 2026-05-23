@@ -1069,7 +1069,7 @@ function renderDashboard(summary, gaps, caaspp, elpac, lcap) {
                   <td>${c.claim3 != null ? c.claim3.toFixed(1) : '—'}</td>
                   <td>${c.claim4 != null ? c.claim4.toFixed(1) : '—'}</td>
                 </tr>`).join('')
-              : \`<tr class="loading-row"><td colspan="9">No \${escHtml(writtenLabel)} data found for this district.</td></tr>\`}
+              : '<tr class="loading-row"><td colspan="9">No ' + escHtml(writtenLabel) + ' data found for this district.</td></tr>'}
             </tbody>
           </table>
         </div>
@@ -1092,7 +1092,7 @@ function renderDashboard(summary, gaps, caaspp, elpac, lcap) {
                   <td>${e.n_tested ?? '—'}</td>
                   <td>${e.pct_level3_4 != null ? e.pct_level3_4.toFixed(1) + '%' : '—'}</td>
                 </tr>`).join('')
-              : \`<tr class="loading-row"><td colspan="5">No \${escHtml(oralLabel)} data found for this district.</td></tr>\`}
+              : '<tr class="loading-row"><td colspan="5">No ' + escHtml(oralLabel) + ' data found for this district.</td></tr>'}
             </tbody>
           </table>
         </div>
@@ -1120,7 +1120,7 @@ function renderDashboard(summary, gaps, caaspp, elpac, lcap) {
                     ? '<span class="badge badge-ok">✓ Yes</span>'
                     : '<span class="badge badge-neutral">No</span>'}</td>
                 </tr>`).join('')
-              : \`<tr class="loading-row"><td colspan="6">No \${escHtml(fundingLabel)} data found for this district.</td></tr>\`}
+              : '<tr class="loading-row"><td colspan="6">No ' + escHtml(fundingLabel) + ' data found for this district.</td></tr>'}
             </tbody>
           </table>
         </div>
