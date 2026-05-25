@@ -189,10 +189,9 @@
     margin-top: 1px;
   }
 
-  .sidebar-section select,
-  .sidebar-filters select {
+  .sidebar-section select {
     width: 100%;
-    background: #1a2e4a;
+    background: rgba(255,255,255,0.05);
     border: 1px solid var(--border);
     border-radius: 6px;
     padding: 0.5rem 0.6rem;
@@ -201,26 +200,33 @@
     font-size: 0.83rem;
     outline: none;
     cursor: pointer;
-    margin-bottom: 0;
   }
 
-  .sidebar-section select:focus,
-  .sidebar-filters select:focus { border-color: var(--gold); }
-
-  .sidebar-section select option,
-  .sidebar-filters select option {
-    background: #1a2e4a;
-    color: var(--cream);
-  }
+  .sidebar-section select:focus { border-color: var(--gold); }
 
   .sidebar-filters label {
     display: block;
     font-size: 0.75rem;
     color: var(--slate);
     margin-bottom: 0.3rem;
-    margin-top: 0.75rem;
     font-weight: 500;
   }
+
+  .sidebar-filters select {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5rem 0.6rem;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.83rem;
+    outline: none;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+  }
+
+  .sidebar-filters select:focus { border-color: var(--gold); }
 
   /* ── Main dashboard ── */
   .main {
@@ -648,6 +654,27 @@
   ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); border-radius: 10px; }
   ::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.4); }
 
+  .back-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--gold);
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+    transition: all 0.15s;
+  }
+  .back-btn:hover {
+    background: rgba(201,168,76,0.1);
+    border-color: var(--gold);
+  }
+
   /* Responsive notice */
   @media (max-width: 1100px) {
     .layout { grid-template-columns: 240px 1fr; }
@@ -967,9 +994,12 @@ function renderDashboard(summary, gaps, caaspp, elpac, lcap) {
 
   const html = `
     <div class="district-header">
-      <div>
-        <div class="district-title">${escHtml(d.district_name || currentDistrict.district_name)}</div>
-        <div class="district-county-tag">${escHtml(d.county || currentDistrict.county)} County${currentDistrict.state ? ' · ' + escHtml(currentDistrict.state) : ''} · District ID ${escHtml(d.district_id || currentDistrict.district_id)}</div>
+      <div style="display:flex;align-items:flex-start;gap:1rem;">
+        <button class="back-btn" onclick="goHome()" title="Back to landing page">&#8592;</button>
+        <div>
+          <div class="district-title">${escHtml(d.district_name || currentDistrict.district_name)}</div>
+          <div class="district-county-tag">${escHtml(d.county || currentDistrict.county)} County${currentDistrict.state ? ' · ' + escHtml(currentDistrict.state) : ''} · District ID ${escHtml(d.district_id || currentDistrict.district_id)}</div>
+        </div>
       </div>
       <button class="export-btn" onclick="exportCSV()">↓ Export CSV</button>
     </div>
@@ -1126,6 +1156,22 @@ function renderDashboard(summary, gaps, caaspp, elpac, lcap) {
       if (currentDistrict) loadDistrictData(currentDistrict.district_id);
     });
   });
+}
+
+// ── Back to landing ────────────────────────────────────────────────────────────
+function goHome() {
+  currentDistrict = null;
+  document.getElementById('mainContent').innerHTML = `
+    <div class="empty-state">
+      <div class="empty-state-icon">◈</div>
+      <h2>Select a District</h2>
+      <p>Choose a district from the sidebar to view VERA data — gap profiles, CAASPP results, ELPAC scores, LCAP allocations, and observations.</p>
+    </div>`;
+  renderDistricts(allDistricts.filter(d =>
+    d.district_name.toLowerCase().includes(
+      document.getElementById('districtSearch').value.toLowerCase()
+    )
+  ));
 }
 
 // ── Tabs ───────────────────────────────────────────────────────────────────────
