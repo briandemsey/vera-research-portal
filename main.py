@@ -139,13 +139,24 @@ async def get_jurisdictions():
 async def get_districts(state: Optional[str] = None):
     """Return districts, optionally filtered by state abbreviation."""
     try:
-        query = supabase.table("districts") \
-            .select("district_id, district_name, county, state") \
-            .order("district_name")
-        if state:
-            query = query.eq("state", state.upper())
-        result = query.execute()
-        return {"districts": result.data, "count": len(result.data)}
+        # Supabase caps a single response at 1000 rows, so page through
+        # with .range() until we get a short page. CA has ~2,147 LEAs.
+        PAGE = 1000
+        rows: list = []
+        start = 0
+        while True:
+            query = supabase.table("districts") \
+                .select("district_id, district_name, county, state") \
+                .order("district_name") \
+                .range(start, start + PAGE - 1)
+            if state:
+                query = query.eq("state", state.upper())
+            page = query.execute().data or []
+            rows.extend(page)
+            if len(page) < PAGE:
+                break
+            start += PAGE
+        return {"districts": rows, "count": len(rows)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

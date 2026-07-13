@@ -204,6 +204,18 @@
 
   .sidebar-section select:focus { border-color: var(--gold); }
 
+  .sidebar-section select option,
+  .sidebar-filters select option {
+    background-color: var(--navy-mid);
+    color: var(--cream);
+  }
+
+  .sidebar-section select option:checked,
+  .sidebar-filters select option:checked {
+    background-color: var(--gold);
+    color: var(--navy);
+  }
+
   .sidebar-filters label {
     display: block;
     font-size: 0.75rem;
